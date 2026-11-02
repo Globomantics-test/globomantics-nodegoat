@@ -56,6 +56,12 @@ function UserDAO(db) {
 
     this.validateLogin = (userName, password, callback) => {
 
+        if (typeof userName !== "string") {
+            const noSuchUserError = new Error("User does not exist");
+            noSuchUserError.noSuchUser = true;
+            return callback(noSuchUserError, null);
+        }
+
         // Helper function to compare passwords
         const comparePassword = (fromDB, fromUser) => {
             return fromDB === fromUser;
@@ -89,7 +95,7 @@ function UserDAO(db) {
         };
 
         usersCol.findOne({
-            userName: userName
+            userName: { $eq: userName }
         }, validateUserDoc);
     };
 
